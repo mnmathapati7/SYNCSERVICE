@@ -12,10 +12,6 @@ public class SyncPartsWithProduct_TEST {
             partList.add(new SQX_Part__c(Name = 'test'+i, Part_Number__c = '000'+i, Active__c=true));
         }
         insert partList;
-         
-        
-        
-        
         
     }
     @isTest
@@ -25,23 +21,40 @@ public class SyncPartsWithProduct_TEST {
         List<SQX_Part__c>newList = new List<SQX_Part__c>([Select Id,Name,Product__c From SQX_Part__c Where Product__c = null]);
         system.assertEquals(250,newList.size(), 'expexted data is not matching with actual');
         Test.stopTest();
-
-       
         
     }
     @isTest
     private static void synchPartsWithProduct1_TEST1(){
         User u = TestFactory.generateUser('Standard User');
+        System.debug(u);
         System.runAs(u) {
-	    Test.startTest();
-        SynchPartsWithProduct.synchWhileInserting();
-            
-            Test.stopTest();       
-
-    }
-        List<SQX_Part__c>newList = new List<SQX_Part__c>();
+            Test.startTest();
+            SynchPartsWithProduct.synchWhileInserting();
+            List<SQX_Part__c>newList = new List<SQX_Part__c>();
             newList = [Select Id,Name,Product__c From SQX_Part__c];
+            System.assertEquals(0, newList.size(), 'msg');
+            Test.stopTest();       
+            
+        }
+        
+    }
+    @isTest
+    private static void synchPartsWithProduct1_TEST3(){
+        User u = TestFactory.generateUser('standard user');
+        PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Name = 'CQ_Product_Admin'];
+        System.debug(ps.Id);
+        PermissionSetAssignment psa = new PermissionSetAssignment();
+        psa.AssigneeId = u.Id;
+        psa.PermissionSetId = ps.Id;
+        insert psa;
+        System.runAs(u) {
+            Test.startTest();
+            SynchPartsWithProduct.synchWhileInserting();
+            SQX_Part__c [] newList = [Select Id,Name,Product__c From SQX_Part__c];
             System.assertEquals(500, newList.size(), 'msg');
+            Test.stopTest();     
+            
+        }
         
     }
 }
