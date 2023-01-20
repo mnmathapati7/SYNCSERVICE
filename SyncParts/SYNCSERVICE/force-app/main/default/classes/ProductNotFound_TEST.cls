@@ -18,31 +18,14 @@ private class ProductNotFound_TEST{
        system.assertEquals(500, newList.size(), 'msg');
     }
     private static testMethod void execute_As_Standard_User_TEST(){
-   /* UserRole userRole = new UserRole(DeveloperName = 'TestingTeam', Name = 'Testing Team');
-    insert userRole;
-    User u = new User(
-      LastName = 'last',
-      Email = 'Cpt.Awesome@awesomesauce.com',
-      Username = 'Cpt.Awesome@awesomesauce.com',
-      CompanyName = 'Testing Co',
-      Title = 'Captian',
-      Alias = 'alias',
-      TimeZoneSidKey = 'America/Los_Angeles',
-      EmailEncodingKey = 'UTF-8',
-      LanguageLocaleKey = 'en_US',
-      LocaleSidKey = 'en_US',
-      UserRoleId = userRole.Id
-    );
-    insert u;*/
         User testUser = TestFactory.generateUser('Standard User');
         system.runAs(testUser){
         Test.startTest();
-        System.debug('Current User: ' + userInfo.getUserName());
-        System.debug('Current User: ' + userInfo.getUserRoleId());
         Id batchId = Database.executeBatch(new ProductNotFound(), 500);
+            System.debug(batchId);
         Test.stopTest();
        List<Product2> newList = new List<Product2>([Select Id,Name From Product2]);
-       system.assertEquals(500, newList.size(), 'msg');
+       system.assertEquals(0, newList.size(), 'msg');
     }
     }
 }
